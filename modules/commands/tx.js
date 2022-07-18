@@ -1,5 +1,5 @@
 module.exports.config = {
-	name: "taixiu",
+	name: "tx",
 	version: "0.1.1",
 	hasPermssion: 0,
 	credits: "Keyl",
