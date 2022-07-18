@@ -1,4 +1,4 @@
-const moneydown = 1000; // Số tiền đăng kí chơi
+const moneydown = 2000; // Số tiền đăng kí chơi
   
 const axios = require("axios");
 const fs = require("fs-extra");
@@ -17,31 +17,31 @@ module.exports.config = {
 
 function equi(level) {
   if (level == 0) var tienthuong = 0;
-  if (level == 1) var tienthuong = 200;
-  if (level == 2) var tienthuong = 400;
-  if (level == 3) var tienthuong = 600;
-  if (level == 4) var tienthuong = 1000;
-  if (level == 5) var tienthuong = 2000;
-  if (level == 6) var tienthuong = 3000;
-  if (level == 7) var tienthuong = 6000;
-  if (level == 8) var tienthuong = 10000;
-  if (level == 9) var tienthuong = 14000;
-  if (level == 10) var tienthuong = 22000;
-  if (level == 11) var tienthuong = 30000;
-  if (level == 12) var tienthuong = 40000;
-  if (level == 13) var tienthuong = 80000;
-  if (level == 14) var tienthuong = 150000;
+  if (level == 1) var tienthuong = 500;
+  if (level == 2) var tienthuong = 1000;
+  if (level == 3) var tienthuong = 2000;
+  if (level == 4) var tienthuong = 3000;
+  if (level == 5) var tienthuong = 5000;
+  if (level == 6) var tienthuong = 7500;
+  if (level == 7) var tienthuong = 10000;
+  if (level == 8) var tienthuong = 12500;
+  if (level == 9) var tienthuong = 15000;
+  if (level == 10) var tienthuong = 25000;
+  if (level == 11) var tienthuong = 50000;
+  if (level == 12) var tienthuong = 100000;
+  if (level == 13) var tienthuong = 250000;
+  if (level == 14) var tienthuong = 500000;
   return tienthuong;
 }
 
 module.exports.handleReply = async function ({ event, Users, api, handleReply, Currencies }) {
   if (handleReply.type == "answer") {
     var { threadID, messageID, senderID } = event;
-    if (senderID !== handleReply.author) return api.sendMessage("Chỗ người khác đang chơi vô duyên thế -.-", threadID, messageID);
+    if (senderID !== handleReply.author) return api.sendMessage("Chỗ người ta đang chơi vô duyên thế -.-", threadID, messageID);
     var name = await Users.getNameUser(senderID);
     var senderInfo = await Users.getData(senderID);
     var choose = event.body.toUpperCase();
-    if (choose !== "A" && choose !== "B" && choose !== "C" && choose !== "D") return api.sendMessage("Câu trả lời của bạn đéo hợp lệ!",threadID, messageID);
+    if (choose !== "A" && choose !== "B" && choose !== "C" && choose !== "D") return api.sendMessage("Câu trả lời của bạn không hợp lệ!",threadID, messageID);
     if (choose === handleReply.dapandung) {
       var levelcc = handleReply.level + 1;
       if (levelcc < 15) {
@@ -50,7 +50,7 @@ module.exports.handleReply = async function ({ event, Users, api, handleReply, C
         await Users.setData(senderID, senderInfo);
         return api.sendMessage(`${choose} là đáp án chính xác, ${handleReply.giaithich}\n\nXin chúc mừng người chơi ${name} đã xuất sắc trả lời đúng câu hỏi ${djtme} nâng mức phần thưởng lên ${equi(levelcc)}$`, threadID, messageID);
       } else if (levelcc == 15) {
-        var tienthuong = 250000;
+        var tienthuong = 1000000;
         Currencies.increaseMoney(senderID, tienthuong);
         senderInfo.data.altp = { level: -1 };
         await Users.setData(senderID, senderInfo);
@@ -58,11 +58,11 @@ module.exports.handleReply = async function ({ event, Users, api, handleReply, C
       }
     } else {
       var level = handleReply.level;
-      if (level > 5 && level < 10) { var tienthuong = 2000; } else if (level > 10) { var tienthuong = 22000; } else var tienthuong = 0;
+      if (level > 5 && level < 10) { var tienthuong = 5000; } else if (level > 10) { var tienthuong = 25000; } else var tienthuong = 0;
       senderInfo.data.altp = { level: -1 };
       await Users.setData(senderID, senderInfo);
-      if (tienthuong == 2000) var moc = "đầu tiên";
-      if (tienthuong == 22000) var moc = "thứ hai";
+      if (tienthuong == 5000) var moc = "đầu tiên";
+      if (tienthuong == 25000) var moc = "thứ hai";
       if (moc == "đầu tiên" || moc == "thứ hai") {
         Currencies.increaseMoney(senderID,tienthuong);
         return api.sendMessage(`${choose} là đáp án không chính xác, câu trả lời đúng của chúng ta là ${handleReply.dapandung}, ${handleReply.giaithich}\n\nNgười chơi của chúng ta đã trả lời sai và ra về với phần thưởng ở mốc ${moc} là ${tienthuong}$\nCảm ơn bạn đã tham gia chương trình, hẹn gặp lại bạn ở chương trình lần sau`, threadID, messageID);
@@ -112,7 +112,7 @@ module.exports.run = async function ({ api, event, args, Currencies, Users}) {
   if (type == "info") {
     const path2 = __dirname + '/cache/info.png';
     if (!fs.existsSync(path2)) {
-      var down = (await axios.get("https://i.postimg.cc/D0nccdss/info.png", { responseType: "arraybuffer" })).data;
+      var down = (await axios.get("https://i.postimg.cc/26Tvsytq/info.png", { responseType: "arraybuffer" })).data;
       fs.writeFileSync(path2, Buffer.from(down, "utf-8"));
     };
     if (!senderInfo.data.altp || senderInfo.data.altp.level == -1) return api.sendMessage({ body: `Bạn chưa đăng kí, dùng ${prefix}altp register để đăng kí nhé! (tốn ${moneydown}$)`, attachment: fs.createReadStream(path2)}, threadID, () => fs.unlinkSync(path2), messageID);
